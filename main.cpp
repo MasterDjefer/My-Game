@@ -1,15 +1,14 @@
 #include <iostream>
 #include <conio.h>
 #include <cstdlib>
-#define n 11
-#define m 15
+#define n 8
+#define m 8
 using namespace std;
-
 
 class Table
 {
 protected:
-    void set_null(char mass[n][m])
+    void set_null(char mass[][m])
     {
         for (int i = 0; i < n; ++i)
             for (int j = 0; j < m; ++j)
@@ -27,6 +26,32 @@ protected:
             mass[0][i] = '#';
             mass[n-1][i] = '#';
         }
+    }    
+    void set_side_level1(char mass[n][m])
+    {
+        for (int i = 0; i < n; ++i)
+        {
+            mass[i][0] = '#';
+            mass[i][m-1] = '#';
+        }
+        for (int i = 0; i < m; ++i)
+        {
+            mass[0][i] = '#';
+            mass[n-1][i] = '#';
+        }
+        for (int i = 1; i < 4; ++i)
+            for (int j = 1; j < 3; ++j)
+                mass[i][j] = '#';
+        for (int i = 1; i < 3; ++i)
+            for (int j = 4; j < 7; ++j)
+                mass[i][j] = '#';
+        for (int i = 5; i < 7; ++i)
+            for (int j = 1; j < 4; ++j)
+                mass[i][j] = '#';
+        for (int i = 4; i < 7; ++i)
+            for (int j = 5; j < 7; ++j)
+                mass[i][j] = '#';
+
     }
     void show(char mass[n][m])
     {
@@ -46,33 +71,35 @@ protected:
     int head_y;
     int target_x;
     int target_y;
-    static const int number = 8;
-    int hand[number];
-    int target[number];
+    int number;
+    int hand[100];
+    int target[100];
 protected:
-    void set_head(char mass[n][m])
+    void set_elements_level1()
     {
-        head_x = 1;
-        head_y = 1;
+        number = 8;
+        head_x = 4;
+        head_y = 4;
+        hand[0] = 3; hand[1] = 3;
+        hand[2] = 3; hand[3] = 5;
+        hand[4] = 4; hand[5] = 3;
+        hand[6] = 5; hand[7] = 4;
+        target[0] = 1; target[1] = 3;
+        target[2] = 3; target[3] = 6;
+        target[4] = 4; target[5] = 1;
+        target[6] = 6; target[7] = 4;
+    }
+    void set_head(char mass[n][m])
+    {        
         mass[head_x][head_y] = 'o';
     }
     void set_hand(char mass[n][m])
     {
-        hand[0] = 3; hand[1] = 2;
-        hand[2] = 8; hand[3] = 8;
-        hand[4] = 6; hand[5] = 8;
-        hand[6] = n-3; hand[7] = m-5;
-
         for (int i = 0; i < number; i+=2)
             mass[hand[i]][hand[i+1]] = '@';
     }
     void set_target(char mass[n][m])
     {
-        target[0] = 3; target[1] = 4;
-        target[2] = 3; target[3] = 5;
-        target[4] = 3; target[5] = 6;
-        target[6] = 3; target[7] = 7;
-
         for (int i = 0; i < number; i+=2)
             mass[target[i]][target[i+1]] = '*';
     }
@@ -87,15 +114,46 @@ public:
     {
         set_null(mass);
         set_side(mass);
+        set_side_level1(mass);
+        set_elements_level1();
         set_head(mass);
         set_hand(mass);
         set_target(mass);
+    }    
+    int search(int a, int b)
+    {
+        for (int i = 0; i < n; i+=2)
+            if (hand[i] == a && hand[i+1] == b)
+                return i;
+    }
+    bool check_finish()
+    {
+        int count = 0;
+        for (int i = 0; i < number; i+=2)
+        {
+            for (int j = 0; j < number; j+=2)
+            {
+                if ((hand[i] == target[j]) && (hand[i+1] == target[j+1]))
+                {
+                    count++;
+                    break;
+                }
+            }
+        }
+        if (count == number / 2)
+            return true;
+        else
+            return false;
     }
     void menu()
     {
         system("cls");
         show(mass);
-
+        if (check_finish())
+        {
+            cout << "You won!\n";
+            return;
+        }
         char choice = _getch();
 
         switch(choice)
@@ -203,15 +261,7 @@ public:
 
         menu();
     }
-
-    int search(int a, int b)
-    {
-        for (int i = 0; i < n; i+=2)
-            if (hand[i] == a && hand[i+1] == b)
-                return i;
-    }
 };
-
 
 
 int main()
