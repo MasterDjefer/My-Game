@@ -73,6 +73,7 @@ protected:
             for (int j = 6; j < m-1; ++j)
                 mass[i][j] = '#';
     }
+
     void set_side_level3(char mass[n][m])
     {
         for (int i = 1; i < 9; ++i)
@@ -154,7 +155,16 @@ protected:
         target[2] = 5; target[3] = 7;
         target[4] = 6; target[5] = 7;
     }
-
+    void set_elements_level_test()
+    {
+        number = 4;
+        head_x = 1;
+        head_y = 1;
+        hand[0] = 3; hand[1] = 3;
+        hand[2] = 3; hand[3] = 4;
+        target[0] = 6; target[1] = 6;
+        target[2] = 7; target[3] = 6;
+    }
     void set_head(char mass[n][m])
     {        
         mass[head_x][head_y] = 'o';
@@ -168,6 +178,16 @@ protected:
     {
         for (int i = 0; i < number; i+=2)
             mass[target[i]][target[i+1]] = '*';
+    }
+    void change_hand(char mass[n][m])
+    {
+        for (int i = 0; i < number; i+=2)
+            for (int j = 0; j < number; j+=2)
+                if ((hand[i] == target[j]) && (hand[i+1] == target[j+1]))
+                {
+                    mass[hand[i]][hand[i+1]] = '+';
+                    break;
+                }
     }
 };
 
@@ -184,7 +204,7 @@ public:
     }    
     void choose_level()
     {
-        cout << "Enter your level(1-3): ";
+        cout << "Enter your level(1-4): ";
         int choice = 0;
         cin >> choice;
         system("cls");
@@ -201,6 +221,9 @@ public:
             case 3:
                 set_side_level3(mass);
                 set_elements_level3();
+                break;
+            case 4:
+                set_elements_level_test();
                 break;
             default:
                 cout << "Bad inputing or this level doesn\'t exist!\n";
@@ -240,6 +263,7 @@ public:
     {
         system("cls");
         show(mass);
+
         if (check_finish())
         {
             cout << "You won!\n";
@@ -260,6 +284,21 @@ public:
                 }
                 else
                 if (mass[head_x][head_y + 1] == '@')
+                {
+                    int temp = search(head_x, head_y + 1);
+
+                    if (mass[hand[temp]][hand[temp + 1] + 1] != '#' && mass[hand[temp]][hand[temp + 1] + 1] != '@')
+                    {
+                        mass[hand[temp]][hand[temp + 1] + 1] = '@';
+                        hand[temp + 1]++;
+
+                        mass[head_x][head_y + 1] = 'o';
+                        mass[head_x][head_y] = ' ';
+                        head_y++;
+                    }
+                }
+                else
+                if (mass[head_x][head_y + 1] == '+')
                 {
                     int temp = search(head_x, head_y + 1);
 
@@ -296,6 +335,21 @@ public:
                         head_y--;
                     }
                 }
+                else
+                if (mass[head_x][head_y - 1] == '+')
+                {
+                    int temp = search(head_x, head_y - 1);
+
+                    if (mass[hand[temp]][hand[temp + 1] - 1] != '#' && mass[hand[temp]][hand[temp + 1] - 1] != '@')
+                    {
+                        mass[hand[temp]][hand[temp + 1] - 1] = '@';
+                        hand[temp + 1]--;
+
+                        mass[head_x][head_y - 1] = 'o';
+                        mass[head_x][head_y] = ' ';
+                        head_y--;
+                    }
+                }
                 break;
             case 'w':
                 if (mass[head_x - 1][head_y] == ' ' || mass[head_x - 1][head_y] == '*')
@@ -307,7 +361,22 @@ public:
                 else
                 if (mass[head_x - 1][head_y] == '@')
                 {
-                    int temp = search(head_x -1, head_y);
+                    int temp = search(head_x - 1, head_y);
+
+                    if (mass[hand[temp] - 1][hand[temp + 1]] != '#' && mass[hand[temp] - 1][hand[temp + 1]] != '@')
+                    {
+                        mass[hand[temp] - 1][hand[temp + 1]] = '@';
+                        hand[temp]--;
+
+                        mass[head_x - 1][head_y] = 'o';
+                        mass[head_x][head_y] = ' ';
+                        head_x--;
+                    }
+                }
+                else
+                if (mass[head_x - 1][head_y] == '+')
+                {
+                    int temp = search(head_x - 1, head_y);
 
                     if (mass[hand[temp] - 1][hand[temp + 1]] != '#' && mass[hand[temp] - 1][hand[temp + 1]] != '@')
                     {
@@ -342,6 +411,21 @@ public:
                         head_x++;
                     }
                 }
+                else
+                if (mass[head_x + 1][head_y] == '+')
+                {
+                    int temp = search(head_x + 1, head_y);
+
+                    if (mass[hand[temp] + 1][hand[temp + 1]] != '#' && mass[hand[temp] + 1][hand[temp + 1]] != '@')
+                    {
+                        mass[hand[temp] + 1][hand[temp + 1]] = '@';
+                        hand[temp]++;
+
+                        mass[head_x + 1][head_y] = 'o';
+                        mass[head_x][head_y] = ' ';
+                        head_x++;
+                    }
+                }
                 break;
         }
         for (int i = 0; i < number; i+=2)
@@ -349,6 +433,7 @@ public:
             if (mass[target[i]][target[i + 1]] == ' ')
                 mass[target[i]][target[i + 1]] = '*';
         }
+        change_hand(mass);
 
         menu();
     }
