@@ -1,5 +1,6 @@
 #include <iostream>
 #include <conio.h>
+#include <cstring>
 #include <cstdlib>
 #define n 10
 #define m 10
@@ -101,6 +102,7 @@ protected:
                 cout << mass[i][j];
             cout << endl;
         }
+        cout << "Press \'h\' for instriction\n";
     }
 };
 
@@ -201,28 +203,31 @@ public:
         set_null(mass);
         set_side(mass);
         choose_level();
-    }    
+
+    }
     void choose_level()
     {
         cout << "Enter your level(1-4): ";
-        int choice = 0;
-        cin >> choice;
+        string c = "";
+        char choice = 0;
+        cin >> c;
+        if (c.size() == 1) choice = c.at(0);
         system("cls");
         switch (choice)
         {
-            case 1:
+            case '1':
                 set_side_level1(mass);
                 set_elements_level1();
                 break;
-            case 2:
+            case '2':
                 set_side_level2(mass);
                 set_elements_level2();
                 break;
-            case 3:
+            case '3':
                 set_side_level3(mass);
                 set_elements_level3();
                 break;
-            case 4:
+            case '4':
                 set_elements_level_test();
                 break;
             default:
@@ -259,6 +264,22 @@ public:
         else
             return false;
     }
+    void instruction()
+    {
+        cout << "\'w\' - move up\n";
+        cout << "\'s\' - move down\n";
+        cout << "\'a\' - move left\n";
+        cout << "\'d\' - move right\n\n";
+
+        cout << "\'o\' - it\'s you. You can move and move blocks\n";
+        cout << "\'#\' - it\'s wall. You can\'t go throw it\n";
+        cout << "\'@\' - it\'s block. You must move it to \'*\'\n";
+        cout << "\'*\' - it\'s platform. You must cover it by \'@\'\n";
+
+        cout << "Press any key to continue\n";
+        _getch();
+    }
+
     void menu()
     {
         system("cls");
@@ -287,7 +308,7 @@ public:
                 {
                     int temp = search(head_x, head_y + 1);
 
-                    if (mass[hand[temp]][hand[temp + 1] + 1] != '#' && mass[hand[temp]][hand[temp + 1] + 1] != '@')
+                    if (mass[hand[temp]][hand[temp + 1] + 1] != '#' && mass[hand[temp]][hand[temp + 1] + 1] != '@' && mass[hand[temp]][hand[temp + 1] + 1] != '+')
                     {
                         mass[hand[temp]][hand[temp + 1] + 1] = '@';
                         hand[temp + 1]++;
@@ -302,7 +323,7 @@ public:
                 {
                     int temp = search(head_x, head_y + 1);
 
-                    if (mass[hand[temp]][hand[temp + 1] + 1] != '#' && mass[hand[temp]][hand[temp + 1] + 1] != '@')
+                    if (mass[hand[temp]][hand[temp + 1] + 1] != '#' && mass[hand[temp]][hand[temp + 1] + 1] != '@' && mass[hand[temp]][hand[temp + 1] + 1] != '+')
                     {
                         mass[hand[temp]][hand[temp + 1] + 1] = '@';
                         hand[temp + 1]++;
@@ -325,7 +346,7 @@ public:
                 {
                     int temp = search(head_x, head_y - 1);
 
-                    if (mass[hand[temp]][hand[temp + 1] - 1] != '#' && mass[hand[temp]][hand[temp + 1] - 1] != '@')
+                    if (mass[hand[temp]][hand[temp + 1] - 1] != '#' && mass[hand[temp]][hand[temp + 1] - 1] != '@' && mass[hand[temp]][hand[temp + 1] - 1] != '+')
                     {
                         mass[hand[temp]][hand[temp + 1] - 1] = '@';
                         hand[temp + 1]--;
@@ -340,7 +361,7 @@ public:
                 {
                     int temp = search(head_x, head_y - 1);
 
-                    if (mass[hand[temp]][hand[temp + 1] - 1] != '#' && mass[hand[temp]][hand[temp + 1] - 1] != '@')
+                    if (mass[hand[temp]][hand[temp + 1] - 1] != '#' && mass[hand[temp]][hand[temp + 1] - 1] != '@' && mass[hand[temp]][hand[temp + 1] - 1] != '+')
                     {
                         mass[hand[temp]][hand[temp + 1] - 1] = '@';
                         hand[temp + 1]--;
@@ -363,7 +384,7 @@ public:
                 {
                     int temp = search(head_x - 1, head_y);
 
-                    if (mass[hand[temp] - 1][hand[temp + 1]] != '#' && mass[hand[temp] - 1][hand[temp + 1]] != '@')
+                    if (mass[hand[temp] - 1][hand[temp + 1]] != '#' && mass[hand[temp] - 1][hand[temp + 1]] != '@' && mass[hand[temp] - 1][hand[temp + 1]] != '+')
                     {
                         mass[hand[temp] - 1][hand[temp + 1]] = '@';
                         hand[temp]--;
@@ -378,7 +399,7 @@ public:
                 {
                     int temp = search(head_x - 1, head_y);
 
-                    if (mass[hand[temp] - 1][hand[temp + 1]] != '#' && mass[hand[temp] - 1][hand[temp + 1]] != '@')
+                    if (mass[hand[temp] - 1][hand[temp + 1]] != '#' && mass[hand[temp] - 1][hand[temp + 1]] != '@' && mass[hand[temp] - 1][hand[temp + 1]] != '+')
                     {
                         mass[hand[temp] - 1][hand[temp + 1]] = '@';
                         hand[temp]--;
@@ -401,7 +422,7 @@ public:
                 {
                     int temp = search(head_x + 1, head_y);
 
-                    if (mass[hand[temp] + 1][hand[temp + 1]] != '#' && mass[hand[temp] + 1][hand[temp + 1]] != '@')
+                    if (mass[hand[temp] + 1][hand[temp + 1]] != '#' && mass[hand[temp] + 1][hand[temp + 1]] != '@' && mass[hand[temp] + 1][hand[temp + 1]] != '+')
                     {
                         mass[hand[temp] + 1][hand[temp + 1]] = '@';
                         hand[temp]++;
@@ -416,7 +437,7 @@ public:
                 {
                     int temp = search(head_x + 1, head_y);
 
-                    if (mass[hand[temp] + 1][hand[temp + 1]] != '#' && mass[hand[temp] + 1][hand[temp + 1]] != '@')
+                    if (mass[hand[temp] + 1][hand[temp + 1]] != '#' && mass[hand[temp] + 1][hand[temp + 1]] != '@' && mass[hand[temp] + 1][hand[temp + 1]] != '+')
                     {
                         mass[hand[temp] + 1][hand[temp + 1]] = '@';
                         hand[temp]++;
@@ -426,6 +447,9 @@ public:
                         head_x++;
                     }
                 }
+                break;
+            case 'h':
+                instruction();
                 break;
         }
         for (int i = 0; i < number; i+=2)
