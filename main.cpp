@@ -2,20 +2,27 @@
 #include <conio.h>
 #include <cstring>
 #include <cstdlib>
-#define n 10
-#define m 10
 using namespace std;
+
+const int n = 10;
+const int m = 10;
 
 class Table
 {
 protected:
-    void set_null(char mass[][m])
+    char mass[n][m];
+private:
+    bool if_show_instruction;
+public:
+    Table():if_show_instruction(true){}
+
+    void set_null()
     {
         for (int i = 0; i < n; ++i)
             for (int j = 0; j < m; ++j)
                 mass[i][j] = ' ';
     }
-    void set_side(char mass[n][m])
+    void set_side()
     {
         for (int i = 0; i < n; ++i)
         {
@@ -27,8 +34,8 @@ protected:
             mass[0][i] = '#';
             mass[n-1][i] = '#';
         }
-    }    
-    void set_side_level1(char mass[n][m])
+    }
+    void set_side_level1()
     {
         for (int i = 0; i < n; ++i)
         {
@@ -59,7 +66,7 @@ protected:
                 mass[j][i] = '#';
             }
     }
-    void set_side_level2(char mass[n][m])
+    void set_side_level2()
     {
         for (int i = 0; i < 4; ++i)
             for (int j = 0; j < 4; ++j)
@@ -75,7 +82,7 @@ protected:
                 mass[i][j] = '#';
     }
 
-    void set_side_level3(char mass[n][m])
+    void set_side_level3()
     {
         for (int i = 1; i < 9; ++i)
         {
@@ -94,7 +101,7 @@ protected:
         mass[5][4] = '#';
         mass[5][1] = '#';
     }
-    void show(char mass[n][m])
+    void show()
     {
         for (int i = 0; i < n; ++i)
         {
@@ -102,11 +109,13 @@ protected:
                 cout << mass[i][j];
             cout << endl;
         }
-        cout << "Press \'h\' for instriction\n";
+        if (if_show_instruction)
+            cout << "Press \'h\' for instriction\n";
+        if_show_instruction = false;
     }
 };
 
-class Elements
+class Elements : protected Table
 {
 protected:
     int head_x;
@@ -116,7 +125,7 @@ protected:
     int number;
     int hand[10];
     int target[10];
-protected:
+
     void set_elements_level1()
     {
         number = 8;
@@ -167,21 +176,21 @@ protected:
         target[0] = 6; target[1] = 6;
         target[2] = 7; target[3] = 6;
     }
-    void set_head(char mass[n][m])
-    {        
+    void set_head()
+    {
         mass[head_x][head_y] = 'o';
     }
-    void set_hand(char mass[n][m])
+    void set_hand()
     {
         for (int i = 0; i < number; i+=2)
             mass[hand[i]][hand[i+1]] = '@';
     }
-    void set_target(char mass[n][m])
+    void set_target()
     {
         for (int i = 0; i < number; i+=2)
             mass[target[i]][target[i+1]] = '*';
     }
-    void change_hand(char mass[n][m])
+    void change_hand()
     {
         for (int i = 0; i < number; i+=2)
             for (int j = 0; j < number; j+=2)
@@ -193,18 +202,16 @@ protected:
     }
 };
 
-class Move : Elements, Table
+class Move : private Elements
 {
-private:
-    char mass[n][m];
 public:
     Move()
     {
-        set_null(mass);
-        set_side(mass);
+        set_null();
+        set_side();
         choose_level();
-
     }
+private:
     void choose_level()
     {
         cout << "Enter your level(1-4): ";
@@ -216,15 +223,15 @@ public:
         switch (choice)
         {
             case '1':
-                set_side_level1(mass);
+                set_side_level1();
                 set_elements_level1();
                 break;
             case '2':
-                set_side_level2(mass);
+                set_side_level2();
                 set_elements_level2();
                 break;
             case '3':
-                set_side_level3(mass);
+                set_side_level3();
                 set_elements_level3();
                 break;
             case '4':
@@ -234,9 +241,9 @@ public:
                 cout << "Bad inputing or this level doesn\'t exist!\n";
                 choose_level();
         }
-        set_head(mass);
-        set_hand(mass);
-        set_target(mass);
+        set_head();
+        set_hand();
+        set_target();
     }
 
     int search(int a, int b)
@@ -279,11 +286,11 @@ public:
         cout << "Press any key to continue\n";
         _getch();
     }
-
+public:
     void menu()
     {
         system("cls");
-        show(mass);
+        show();
 
         if (check_finish())
         {
@@ -457,7 +464,7 @@ public:
             if (mass[target[i]][target[i + 1]] == ' ')
                 mass[target[i]][target[i + 1]] = '*';
         }
-        change_hand(mass);
+        change_hand();
 
         menu();
     }
